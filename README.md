@@ -62,7 +62,7 @@ curl http://localhost:43101/api/ingest/status/<jobId>
 
 ## Clustering
 
-Articles from the last `CLUSTER_DAYS` (default 3) are vectorized with scikit-learn `TfidfVectorizer` on title + summary (+ body snippet). Pairs with cosine similarity ≥ `SIMILARITY_THRESHOLD` (default `0.35`) form a graph; connected components of size ≥ 2 become clusters. Labels are the top shared TF-IDF terms.
+Articles from the last `CLUSTER_DAYS` (default 3) are vectorized with scikit-learn `TfidfVectorizer` on title + summary (+ body snippet). Pairs with cosine similarity ≥ `SIMILARITY_THRESHOLD` (default `0.28`) form a graph; connected components of size ≥ 2 become clusters. Labels are the top shared TF-IDF terms.
 
 ## Deployment
 

@@ -14,7 +14,7 @@ RSS_FEEDS: dict[str, str] = {
     "Al Jazeera": "https://www.aljazeera.com/xml/rss/all.xml",
 }
 
-SIMILARITY_THRESHOLD = float(os.environ.get("SIMILARITY_THRESHOLD", "0.35"))
+SIMILARITY_THRESHOLD = float(os.environ.get("SIMILARITY_THRESHOLD", "0.28"))
 CLUSTER_DAYS = int(os.environ.get("CLUSTER_DAYS", "3"))
 MAX_PER_FEED = int(os.environ.get("MAX_PER_FEED", "40"))
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
