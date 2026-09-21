@@ -46,8 +46,11 @@ cd frontend && npm install && npm run dev  # http://localhost:43100
 Create `frontend/.env.local` if needed:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:43101
+NEXT_PUBLIC_API_URL=/news-api
+API_INTERNAL_URL=http://127.0.0.1:43101
 ```
+
+The frontend proxies `/news-api/*` to the Express API (see `next.config.ts`), so the browser only needs the Next.js port.
 
 ### Example API calls
 
@@ -66,7 +69,7 @@ Articles from the last `CLUSTER_DAYS` (default 3) are vectorized with scikit-lea
 
 ## Deployment
 
-- **Frontend:** Vercel — set `NEXT_PUBLIC_API_URL` to the API URL before build.
+- **Frontend:** Vercel — set `NEXT_PUBLIC_API_URL` to the public API URL (or keep `/news-api` with a rewrite/edge proxy). Set `API_INTERNAL_URL` at build time if using the built-in rewrite to a private API host.
 - **API + pipeline:** Render Docker service from the root [`Dockerfile`](Dockerfile) / [`render.yaml`](render.yaml). Set `DATABASE_URL`, `FRONTEND_URL` / `CORS_ORIGIN`, `SIMILARITY_THRESHOLD`, `PYTHON_BIN=python3`.
 - **Database:** Neon Postgres (`sslmode=require`). Schema is applied automatically on API boot and each pipeline run.
 

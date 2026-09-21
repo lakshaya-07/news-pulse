@@ -1,6 +1,6 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "http://localhost:43101";
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "/news-api"
+);
 
 export type ArticleBrief = {
   id: number;
