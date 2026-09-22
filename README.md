@@ -75,9 +75,6 @@ Articles from the last `CLUSTER_DAYS` (default 3) are vectorized with scikit-lea
 
 CORS allows only `FRONTEND_URL` / `CORS_ORIGIN` (no wildcard).
 
-## References
-
-This project is inspired by the [Khabar Threads](https://github.com/gauravsoodtech/khabar-threads) repository by Gaurav Sood, which tackled the same news-clustering challenge. We used it as a guide for architecture and product shape, but **all code here is written from scratch**. Shared ideas (unique URL deduplication, Trafilatura extraction, API spawn of a Python ingest job, timeline UX) are acknowledged; the clustering algorithm (TF-IDF), UI system, and implementation are original.
 
 Completed individually; no external proprietary code used.
 
