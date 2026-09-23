@@ -1,83 +1,167 @@
 # News Pulse
 
-Topic-clustered news timeline: live RSS from BBC, NPR, The Guardian, and Al Jazeera, grouped with **TF-IDF + cosine similarity**, served by a Node API, and read as an editorial timeline in Next.js.
+News Pulse collects recent articles from BBC, NPR, The Guardian, and Al Jazeera, groups textually related coverage into topic clusters, and displays those clusters on an interactive timeline. The project was built as a full-stack developer assessment using Python, Node.js/Express, Next.js/React, and PostgreSQL.
 
-| | |
+## Live project
+
+- **Live demo:** [Open News Pulse](https://news-pulse-5a6t-seven.vercel.app/)
+- **Frontend:** [https://news-pulse-5a6t-seven.vercel.app/](https://news-pulse-5a6t-seven.vercel.app/)
+- **Backend API:** [https://news-pulse-api-6cqx.onrender.com](https://news-pulse-api-6cqx.onrender.com)
+- **Health check:** [https://news-pulse-api-6cqx.onrender.com/health](https://news-pulse-api-6cqx.onrender.com/health)
+
+The frontend may be slow to respond on its first visit if the free-tier API has gone idle; it retries while the API wakes up.
+
+## Screenshots
+
+### Dashboard
+
+![News Pulse dashboard with top stories, source filters, headline ticker, and timeline](docs/screenshots/news-pulse-dashboard.png)
+
+### Timeline
+
+![News Pulse timeline showing topic clusters over time with publisher markers](docs/screenshots/news-pulse-timeline.png)
+
+### Cluster details
+
+![News Pulse cluster detail panel showing related articles, publishers, timestamps, and summaries](docs/screenshots/news-pulse-cluster-details.png)
+
+## Features
+
+- Fetches and normalizes RSS stories from four publishers: BBC, NPR, The Guardian, and Al Jazeera.
+- Extracts article text where available, while continuing when a publisher page cannot be parsed.
+- Avoids repeat inserts using canonicalized article URLs and a unique URL constraint.
+- Groups articles published within a configurable recent window using TF-IDF and cosine similarity.
+- Provides a timeline, top stories, a recent-headline ticker, source filters, time filters, topic search, and cluster details linking to original articles.
+- Lets a user trigger a fresh ingestion run and poll its status from the frontend.
+
+## Architecture and data flow
+
+```text
+RSS feeds
+   ↓
+Python pipeline (fetch → normalize → extract → deduplicate → cluster)
+   ↓
+PostgreSQL (articles and cluster membership)
+   ↓
+Express REST API
+   ↓
+Next.js / React frontend (filters, story details, timeline)
+
+Refresh data → POST /api/ingest/trigger → Python pipeline subprocess
+```
+
+The Python pipeline is in `pipeline/`. The Express API is in `backend/`, and the Next.js frontend is in `frontend/`. The database schema is in `database/migrations/001_init.sql`. The API applies the schema when it starts; the pipeline also applies it before ingesting.
+
+### Topic grouping approach
+
+The project uses **TF-IDF with cosine similarity** (the assessment's Option B). For each article, the pipeline combines its title and RSS summary with up to the first 800 characters of extracted article text, when available. Scikit-learn's `TfidfVectorizer` removes English stop words, considers single words and two-word phrases, and creates a vector of weighted terms for each article.
+
+The pipeline calculates cosine similarity for each article pair. Pairs at or above `SIMILARITY_THRESHOLD` are connected; connected components containing at least two articles become clusters. Each cluster label is formed from up to three of its strongest average TF-IDF terms. The frontend plots the cluster's earliest and latest publication times and individual article timestamps.
+
+The default similarity threshold is `0.28`; it is an initial configurable setting, not a value claimed to be validated against a labeled evaluation set. A lower threshold tends to connect more articles and may produce broader clusters; a higher threshold tends to produce fewer, tighter clusters.
+
+**Known limitation:** similarity is based on overlapping text, not an understanding of events. A cluster can include articles linked through intermediate matches even when every pair is not strongly similar. Similar wording does not guarantee that two outlets are reporting the same real-world event, and different wording can cause coverage of one event to split across clusters. Threshold tuning and evaluation against manually reviewed examples would improve confidence in cluster quality.
+
+## API endpoints
+
+All application endpoints use the `/api` prefix.
+
+| Endpoint | Purpose |
 |---|---|
-| Frontend | Next.js (Vercel-ready) |
-| API | Express on Node (Render-ready Docker image) |
-| Pipeline | Python (`pipeline/`) spawned by the API |
-| Database | Postgres (local Docker Compose or Neon) |
+| `GET /health` | Checks API and database connectivity. |
+| `GET /api/articles?limit=15` | Lists recent articles; `limit` must be an integer from 1 to 50. |
+| `GET /api/clusters?sources=BBC,NPR` | Lists clusters, with an optional source filter. |
+| `GET /api/clusters/:id` | Returns a cluster and its articles in chronological order. |
+| `GET /api/timeline` | Returns timeline clusters, time bounds, article points, sources, and intensity. |
+| `POST /api/ingest/trigger` | Starts the Python ingestion pipeline and returns a job ID. |
+| `GET /api/ingest/status/:jobId` | Returns the status and recent logs for an ingestion job. |
 
-## Architecture
+## Configuration
 
-```
-RSS feeds → pipeline (fetch, extract, TF-IDF cluster) → Postgres
-                                                      ↑
-Frontend (Next.js) ← REST API (Express) ──────────────┘
-                         │
-                         └─ POST /api/ingest/trigger → spawn python -m pipeline.main
-```
+Copy `.env.example` to `.env` at the repository root and set the values for your environment. Do not commit real credentials.
 
-## Local setup
+| Variable | Purpose | Default / example |
+|---|---|---|
+| `DATABASE_URL` | PostgreSQL connection string used by the API and pipeline. | Local example is in `.env.example`. |
+| `PORT` | Express API port. | `43101` |
+| `FRONTEND_URL` / `CORS_ORIGIN` | Allowed frontend origin(s) for API requests. | `http://localhost:43100` |
+| `PYTHON_BIN` | Python executable launched by the API. | `python3` |
+| `SIMILARITY_THRESHOLD` | Minimum cosine similarity for linking article pairs. | `0.28` |
+| `CLUSTER_DAYS` | How many recent days to include when rebuilding clusters. | `3` |
+| `MAX_PER_FEED` | Maximum RSS items read per publisher per run. | `40` |
+| `NEXT_PUBLIC_API_URL` | API base path used by frontend requests. | `/news-api` locally with the Next.js rewrite. |
+| `API_INTERNAL_URL` | Upstream API target for the Next.js `/news-api` rewrite. | `http://127.0.0.1:43101` locally. |
 
-Prerequisites: Node 22+, Python 3.11+, Docker (for Postgres).
+## Run locally
 
-```bash
-cp .env.example .env
+Prerequisites: Node.js 22+, Python 3.11+, and Docker with Docker Compose.
 
-# Database
-docker compose up -d
+1. Create the environment file and start PostgreSQL:
 
-# Python pipeline
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -r pipeline/requirements.txt
-export DATABASE_URL=postgresql://newspulse:newspulse@localhost:5432/newspulse
-python -m pipeline.main
+   ```bash
+   cp .env.example .env
+   docker compose up -d
+   ```
 
-# API
-cd backend && npm install && npm run dev   # http://localhost:43101
+2. Install Python dependencies and run the pipeline once. The `DATABASE_URL` in `.env` should point to the local database shown in `.env.example`.
 
-# Frontend (another terminal)
-cd frontend && npm install && npm run dev  # http://localhost:43100
-```
+   ```bash
+   python -m venv .venv
+   # macOS/Linux:
+   source .venv/bin/activate
+   # Windows PowerShell:
+   # .venv\Scripts\Activate.ps1
+   pip install -r pipeline/requirements.txt
+   python -m pipeline.main
+   ```
 
-Create `frontend/.env.local` if needed:
+3. In one terminal, start the API:
 
-```
-NEXT_PUBLIC_API_URL=/news-api
-API_INTERNAL_URL=http://127.0.0.1:43101
-```
+   ```bash
+   cd backend
+   npm install
+   npm run dev
+   ```
 
-The frontend proxies `/news-api/*` to the Express API (see `next.config.ts`), so the browser only needs the Next.js port.
+4. In another terminal, start the frontend:
 
-### Example API calls
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+   Open `http://localhost:43100`. The frontend proxies `/news-api/*` to the API at `http://127.0.0.1:43101` using `frontend/next.config.ts`. If your API runs elsewhere, set `API_INTERNAL_URL` for the Next.js process.
+
+To run the pipeline manually again, use `python -m pipeline.main`. Optional command-line arguments include `--days 3` and `--threshold 0.28`.
+
+### Example API requests
 
 ```bash
 curl http://localhost:43101/health
 curl http://localhost:43101/api/timeline
-curl http://localhost:43101/api/clusters
+curl "http://localhost:43101/api/clusters?sources=BBC,NPR"
 curl -X POST http://localhost:43101/api/ingest/trigger
-# → { "jobId": "...", "status": "running" }
 curl http://localhost:43101/api/ingest/status/<jobId>
 ```
 
-## Clustering
-
-Articles from the last `CLUSTER_DAYS` (default 3) are vectorized with scikit-learn `TfidfVectorizer` on title + summary (+ body snippet). Pairs with cosine similarity ≥ `SIMILARITY_THRESHOLD` (default `0.28`) form a graph; connected components of size ≥ 2 become clusters. Labels are the top shared TF-IDF terms.
-
 ## Deployment
 
-- **Frontend:** Vercel — set `NEXT_PUBLIC_API_URL` to the public API URL (or keep `/news-api` with a rewrite/edge proxy). Set `API_INTERNAL_URL` at build time if using the built-in rewrite to a private API host.
-- **API + pipeline:** Render Docker service from the root [`Dockerfile`](Dockerfile) / [`render.yaml`](render.yaml). Set `DATABASE_URL`, `FRONTEND_URL` / `CORS_ORIGIN`, `SIMILARITY_THRESHOLD`, `PYTHON_BIN=python3`.
-- **Database:** Neon Postgres (`sslmode=require`). Schema is applied automatically on API boot and each pipeline run.
+The deployment configuration in this repository is set up for a split frontend and API deployment:
 
-CORS allows only `FRONTEND_URL` / `CORS_ORIGIN` (no wildcard).
+- **Frontend:** deploy `frontend/` to Vercel or another Next.js host. Set `NEXT_PUBLIC_API_URL` to `/news-api` when using the rewrite, and set `API_INTERNAL_URL` to the API's reachable origin for that rewrite.
+- **API and Python pipeline:** deploy the root `Dockerfile` using `render.yaml`. The image installs Python dependencies and Node dependencies; the API starts the Python pipeline as a subprocess when ingestion is triggered.
+- **Database:** use a hosted PostgreSQL database, such as Neon. Set `DATABASE_URL` in the API service environment. The schema is applied automatically at API startup and before each pipeline run.
 
+On the API host, set `DATABASE_URL`, `FRONTEND_URL` (or `CORS_ORIGIN`), and any desired clustering settings in the host's environment configuration. `render.yaml` leaves database and frontend-origin values for configuration in the Render dashboard. Keep secrets out of the repository. Configure the frontend's API rewrite to reach the API service, and ensure the allowed CORS origin matches the deployed frontend.
 
-Completed individually; no external proprietary code used.
+## Assessment submission checklist
 
-## License
+- [x] Source code organized into pipeline, backend, and frontend components.
+- [x] Include the live frontend and backend URLs above.
+- [ ] Add the 2–3 minute video walkthrough link here when available: `[Video link pending]`.
+- [x] Document setup, architecture, data sources, grouping approach, parameter choice, and a known limitation.
 
-MIT — see [LICENSE](LICENSE).
+## License and attribution
+
+MIT. See [`LICENSE`](LICENSE). This is an original implementation; the README describes its inspiration as Khabar Threads.
