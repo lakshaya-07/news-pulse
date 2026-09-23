@@ -320,7 +320,7 @@ export default function HomePage() {
         <section className="grid gap-8 border-b border-[var(--line)] pb-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:gap-12 lg:pb-14" aria-labelledby="edition-title">
           <div className="fade-up">
             <p className="mb-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.14em]"><span className="h-2.5 w-2.5 rounded-full bg-[var(--accent-crimson)]" />Live briefing <span className="text-[var(--ink-muted)]">· {filteredClusters.length} threads</span></p>
-            <h1 id="edition-title" className="display-condensed max-w-3xl text-[clamp(4rem,12vw,10.5rem)] leading-[0.79] text-[var(--ink)]">The world<br />gathers<span className="text-[var(--accent-amber)]">.</span></h1>
+            <h1 id="edition-title" className="display-condensed max-w-3xl text-[clamp(3.5rem,10vw,10rem)] leading-[0.92] text-[var(--ink)]">The world<br />gathers<span className="text-[var(--accent-amber)]">.</span></h1>
           </div>
           <div className="flex flex-col gap-5 lg:pb-2">
             <p className="max-w-2xl font-[family-name:var(--font-brand)] text-2xl leading-snug sm:text-3xl lg:text-4xl">Every headline is part of a bigger story.</p>
