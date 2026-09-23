@@ -12,11 +12,11 @@ export function Ticker({ articles, onOpenCluster }: Props) {
   if (articles.length === 0) {
     return (
       <div
-        className="flex items-center gap-3 bg-[var(--masthead)] px-4 py-2 text-sm text-white/80"
+        className="flex items-center gap-3 bg-[var(--accent-amber)] px-4 py-2 text-sm text-[var(--ink)]"
         role="status"
         aria-label="Breaking news ticker"
       >
-        <span className="shrink-0 font-semibold tracking-wider text-[var(--accent-teal)]">
+        <span className="shrink-0 font-bold tracking-wider">
           LIVE
         </span>
         <span>Waiting for headlines…</span>
@@ -28,11 +28,11 @@ export function Ticker({ articles, onOpenCluster }: Props) {
 
   return (
     <div
-      className="relative overflow-hidden bg-[var(--masthead)] text-white"
+      className="relative overflow-hidden border-t border-black/15 bg-[var(--accent-amber)] text-[var(--ink)]"
       role="region"
       aria-label="Breaking news ticker"
     >
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center bg-[var(--masthead)] px-3 font-semibold tracking-[0.2em] text-[var(--accent-teal)]">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 flex items-center bg-[var(--accent-amber)] px-4 font-bold tracking-[0.2em]">
         LIVE
       </div>
       <div className="ticker-track flex w-max gap-8 py-2 pl-20 whitespace-nowrap">
@@ -40,7 +40,7 @@ export function Ticker({ articles, onOpenCluster }: Props) {
           <button
             key={`${a.id}-${i}`}
             type="button"
-            className="inline-flex items-center gap-2 text-sm hover:underline"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase hover:underline sm:text-sm"
             onClick={() => onOpenCluster(a.clusterId, a.url)}
             aria-label={`${a.source}: ${a.title}`}
           >
@@ -49,7 +49,7 @@ export function Ticker({ articles, onOpenCluster }: Props) {
               style={{ background: SOURCE_COLORS[a.source] || "#9aa" }}
               aria-hidden
             />
-            <span className="opacity-70">{a.source}</span>
+            <span className="opacity-75">{a.source}</span>
             <span>{a.title}</span>
           </button>
         ))}

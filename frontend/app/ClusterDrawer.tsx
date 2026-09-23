@@ -40,12 +40,12 @@ export function ClusterDrawer({ open, loading, error, detail, onClose }: Props) 
     <div className="fixed inset-0 z-50 flex justify-end" role="presentation">
       <button
         type="button"
-        className="absolute inset-0 bg-[var(--ink)]/35"
+        className="absolute inset-0 bg-black/60"
         aria-label="Close cluster details"
         onClick={onClose}
       />
       <aside
-        className="drawer-panel relative flex h-full w-full max-w-md flex-col bg-[#f7fafc] shadow-2xl md:max-w-lg"
+        className="drawer-panel relative flex h-full w-full max-w-md flex-col border-l border-[var(--accent-amber)] bg-[var(--paper-light)] shadow-2xl md:max-w-lg"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cluster-drawer-title"

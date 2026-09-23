@@ -1,18 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #e8eef4;
-  --paper-deep: #d5dee8;
-  --ink: #0f1c2e;
-  --ink-muted: #3d4f66;
-  --masthead: #0a1628;
-  --accent-teal: #0d7c7c;
-  --accent-crimson: #b42318;
-  --accent-amber: #c47a0a;
-  --accent-indigo: #3b4f9a;
-  --line: rgba(15, 28, 46, 0.14);
-  --ribbon: #1a3a5c;
-  --focus: #0d7c7c;
+  --font-brand: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-body: Arial, Helvetica, sans-serif;
+  --paper: #f3efdf;
+  --paper-light: #faf7eb;
+  --paper-deep: #e5dfcd;
+  --ink: #171411;
+  --ink-muted: #625d52;
+  --masthead: #13110f;
+  --accent-teal: #f5a900;
+  --accent-crimson: #e53b2c;
+  --accent-amber: #f5a900;
+  --accent-indigo: #42558b;
+  --line: rgba(23, 20, 17, 0.2);
+  --ribbon: #d93025;
+  --focus: #f5a900;
   --background: var(--paper);
   --foreground: var(--ink);
 }
@@ -24,9 +27,9 @@
   --font-display: var(--font-brand);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 html,
 body {
@@ -35,12 +38,9 @@ body {
 }
 
 body {
-  background:
-    radial-gradient(ellipse 120% 80% at 10% -10%, rgba(13, 124, 124, 0.08), transparent 50%),
-    radial-gradient(ellipse 90% 60% at 100% 0%, rgba(59, 79, 154, 0.1), transparent 45%),
-    linear-gradient(180deg, #f2f6fa 0%, var(--paper) 40%, var(--paper-deep) 100%);
+  background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body), Arial, sans-serif;
 }
 
 body::before {
@@ -48,106 +48,66 @@ body::before {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  opacity: 0.035;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   z-index: 0;
 }
 
 #__next,
-main {
-  position: relative;
-  z-index: 1;
-}
+main { position: relative; z-index: 1; }
 
-a {
-  color: inherit;
-}
+a { color: inherit; }
 
 :focus-visible {
   outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
+.display-condensed {
+  font-family: Impact, "Arial Narrow", "Franklin Gothic Condensed", sans-serif;
+  font-stretch: condensed;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.ticker-track { animation: ticker-scroll 45s linear infinite; }
+.ticker-track:hover,
+.ticker-track:focus-within { animation-play-state: paused; }
+
 @keyframes ticker-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes ribbon-grow {
-  from {
-    transform: scaleX(0.2);
-    opacity: 0;
-  }
-  to {
-    transform: scaleX(1);
-    opacity: 1;
-  }
+  from { transform: scaleX(0.2); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
 }
 
 @keyframes slide-in {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
-.ticker-track {
-  animation: ticker-scroll 45s linear infinite;
-}
-
-.ticker-track:hover,
-.ticker-track:focus-within {
-  animation-play-state: paused;
-}
-
-.fade-up {
-  animation: fade-up 0.55s ease-out both;
-}
-
-.ribbon-enter {
-  transform-origin: left center;
-  animation: ribbon-grow 0.7s ease-out both;
-}
-
-.drawer-panel {
-  animation: slide-in 0.28s ease-out both;
-}
+.fade-up { animation: fade-up 0.55s ease-out both; }
+.ribbon-enter { transform-origin: left center; animation: ribbon-grow 0.7s ease-out both; }
+.drawer-panel { animation: slide-in 0.28s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .ticker-track,
   .fade-up,
   .ribbon-enter,
-  .drawer-panel {
-    animation: none !important;
-  }
+  .drawer-panel { animation: none !important; }
 }
 
-.source-bbc {
-  --src: var(--accent-crimson);
-}
-.source-npr {
-  --src: var(--accent-indigo);
-}
-.source-guardian {
-  --src: var(--accent-teal);
-}
-.source-al-jazeera {
-  --src: var(--accent-amber);
-}
+.source-bbc { --src: var(--accent-crimson); }
+.source-npr { --src: var(--accent-indigo); }
+.source-guardian { --src: #137e78; }
+.source-al-jazeera { --src: #cf7800; }

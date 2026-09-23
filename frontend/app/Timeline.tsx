@@ -69,13 +69,13 @@ export function Timeline({ clusters, range, onOpen, highlightedId }: Props) {
   if (!layout) {
     return (
       <div
-        className="mx-4 my-6 rounded-sm border border-[var(--line)] bg-white/40 px-6 py-16 text-center md:mx-8"
+        className="my-6 border border-[var(--line)] bg-[var(--masthead)] px-6 py-16 text-center text-white"
         role="status"
       >
-        <p className="font-[family-name:var(--font-brand)] text-xl text-[var(--ink)]">
+        <p className="display-condensed text-3xl text-[var(--paper)]">
           No clustered stories yet
         </p>
-        <p className="mt-2 text-sm text-[var(--ink-muted)]">
+        <p className="mt-2 text-sm text-white/65">
           Run a refresh to pull live RSS feeds and build the timeline.
         </p>
       </div>
@@ -87,20 +87,23 @@ export function Timeline({ clusters, range, onOpen, highlightedId }: Props) {
 
   return (
     <section
-      className="fade-up px-2 md:px-6"
+      className="fade-up border border-[var(--ink)] bg-[var(--masthead)] px-4 py-6 text-white sm:px-6 sm:py-8"
       aria-label="News timeline"
     >
-      <div className="mb-2 flex items-end justify-between px-2">
-        <h2 className="text-xs font-semibold tracking-[0.18em] text-[var(--ink-muted)] uppercase">
-          Timeline
-        </h2>
-        <p className="text-xs text-[var(--ink-muted)]">
-          Ribbons span first→latest article; beads are outlets
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-white/25 px-1 pb-4">
+        <div>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--accent-amber)]">Follow the thread</p>
+          <h2 className="display-condensed text-4xl leading-none sm:text-5xl">
+            The timeline.
+          </h2>
+        </div>
+        <p className="text-xs text-white/60">
+          Ribbons span first → latest article · dots mark publishers
         </p>
       </div>
       <div className="overflow-x-auto pb-4">
         <div
-          className="relative min-w-[720px] border-y border-[var(--line)] bg-white/35"
+          className="relative min-w-[720px] border-y border-white/20 bg-[#181613]"
           style={{ height }}
         >
           {/* hour ticks */}
@@ -109,10 +112,10 @@ export function Timeline({ clusters, range, onOpen, highlightedId }: Props) {
             return (
               <div
                 key={t}
-                className="absolute top-0 bottom-0 border-l border-[var(--line)]"
+                className="absolute top-0 bottom-0 border-l border-white/15"
                 style={{ left: `${left}%` }}
               >
-                <span className="absolute top-1 left-1 text-[10px] tracking-wide text-[var(--ink-muted)]">
+                <span className="absolute top-1 left-1 text-[10px] tracking-wide text-white/55">
                   {formatTick(t, layout.showDay)}
                 </span>
               </div>
@@ -121,11 +124,11 @@ export function Timeline({ clusters, range, onOpen, highlightedId }: Props) {
 
           {layout.nowLeft >= 0 && layout.nowLeft <= 100 && (
             <div
-              className="absolute top-0 bottom-0 z-20 w-px bg-[var(--accent-crimson)]"
+              className="absolute top-0 bottom-0 z-20 w-px bg-[var(--accent-amber)]"
               style={{ left: `${layout.nowLeft}%` }}
               aria-hidden
             >
-              <span className="absolute -top-0.5 left-1 text-[10px] font-semibold tracking-wider text-[var(--accent-crimson)] uppercase">
+              <span className="absolute -top-0.5 left-1 text-[10px] font-semibold tracking-wider text-[var(--accent-amber)] uppercase">
                 now
               </span>
             </div>
@@ -140,14 +143,14 @@ export function Timeline({ clusters, range, onOpen, highlightedId }: Props) {
                 key={c.id}
                 type="button"
                 className={`ribbon-enter absolute z-10 flex items-center rounded-full px-2 text-left transition-shadow ${
-                  active ? "ring-2 ring-[var(--accent-teal)]" : ""
+                  active ? "ring-2 ring-[var(--accent-amber)]" : ""
                 }`}
                 style={{
                   left: `${c.left}%`,
                   width: `${c.width}%`,
                   top,
                   height: thickness,
-                  background: `linear-gradient(90deg, var(--ribbon), #2a5580)`,
+                  background: `linear-gradient(90deg, #d93025, #a9221b)`,
                   opacity: 0.85 + c.intensity * 0.15,
                   animationDelay: `${Math.min(idx * 40, 400)}ms`,
                 }}
