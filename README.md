@@ -13,17 +13,21 @@ The frontend may be slow to respond on its first visit if the free-tier API has 
 
 ## Screenshots
 
-### Dashboard
+### Dashboard and live coverage
 
-![News Pulse dashboard with top stories, source filters, headline ticker, and timeline](docs/screenshots/news-pulse-dashboard.png)
+![News Pulse dashboard with the editorial header, live ticker, search, publisher filters, and headline](docs/screenshots/news-pulse-redesign-dashboard.png)
+
+### Top stories
+
+![Top topic clusters presented as editorial story cards with article counts](docs/screenshots/news-pulse-redesign-top-stories.png)
 
 ### Timeline
 
-![News Pulse timeline showing topic clusters over time with publisher markers](docs/screenshots/news-pulse-timeline.png)
+![Dark timeline showing topic clusters across time with publisher markers](docs/screenshots/news-pulse-redesign-timeline.png)
 
 ### Cluster details
 
-![News Pulse cluster detail panel showing related articles, publishers, timestamps, and summaries](docs/screenshots/news-pulse-cluster-details.png)
+![Cluster detail drawer listing related stories with publishers, timestamps, and summaries](docs/screenshots/news-pulse-redesign-cluster-details.png)
 
 ## Features
 
