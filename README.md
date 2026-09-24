@@ -8,6 +8,7 @@ News Pulse collects recent articles from BBC, NPR, The Guardian, and Al Jazeera,
 - **Frontend:** [https://news-pulse-5a6t-seven.vercel.app/](https://news-pulse-5a6t-seven.vercel.app/)
 - **Backend API:** [https://news-pulse-api-6cqx.onrender.com](https://news-pulse-api-6cqx.onrender.com)
 - **Health check:** [https://news-pulse-api-6cqx.onrender.com/health](https://news-pulse-api-6cqx.onrender.com/health)
+- **Video walkthrough:** [Watch the 2–3 minute demo](https://youtu.be/o7lZezrXtnc)
 
 The frontend may be slow to respond on its first visit if the free-tier API has gone idle; it retries while the API wakes up.
 
@@ -163,7 +164,7 @@ On the API host, set `DATABASE_URL`, `FRONTEND_URL` (or `CORS_ORIGIN`), and any 
 
 - [x] Source code organized into pipeline, backend, and frontend components.
 - [x] Include the live frontend and backend URLs above.
-- [ ] Add the 2–3 minute video walkthrough link here when available: `[Video link pending]`.
+- [x] Include the 2–3 minute video walkthrough link above.
 - [x] Document setup, architecture, data sources, grouping approach, parameter choice, and a known limitation.
 
 ## License and attribution
